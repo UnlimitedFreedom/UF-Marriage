@@ -12,27 +12,28 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.lenis0012.bukkit.marriage2.internal.MarriageCore;
 
 public class DatabaseListener implements Listener {
-	private final MarriageCore core;
-	
-	public DatabaseListener(MarriageCore core) {
-		this.core = core;
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
-		if(event.getLoginResult() == Result.ALLOWED) {
-			core.getMPlayer(event.getUniqueId());
-		}
-	}  
-	
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPlayerJoin(PlayerJoinEvent event) {
-		core.getMPlayer(event.getPlayer().getUniqueId());
-	}
-	
-	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent event) {
-		Player player = event.getPlayer();
-		core.unloadPlayer(player.getUniqueId());
-	}
+
+    private final MarriageCore core;
+
+    public DatabaseListener(MarriageCore core) {
+        this.core = core;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
+        if (event.getLoginResult() == Result.ALLOWED) {
+            core.getMPlayer(event.getUniqueId());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        core.getMPlayer(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        core.unloadPlayer(player.getUniqueId());
+    }
 }

@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class ChatListener implements Listener {
+
     private final MarriageCore core;
 
     public ChatListener(MarriageCore core) {
@@ -19,7 +20,7 @@ public class ChatListener implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         final Player player = event.getPlayer();
         MPlayer mp = core.getMPlayer(player.getUniqueId());
-        if(mp.isMarried()) {
+        if (mp.isMarried()) {
             event.setFormat(ChatColor.DARK_RED + ChatColor.BOLD.toString() + "<3 " + ChatColor.RESET.toString() + event.getFormat());
         }
     }

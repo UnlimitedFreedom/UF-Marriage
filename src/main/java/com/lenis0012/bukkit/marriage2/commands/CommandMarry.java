@@ -9,10 +9,10 @@ import com.lenis0012.bukkit.marriage2.Marriage;
 import com.lenis0012.bukkit.marriage2.config.Message;
 
 public class CommandMarry extends Command {
-	
-	public CommandMarry(Marriage marriage) {
-		super(marriage, "marry");
-        if(Settings.ENABLE_PRIEST.value()) {
+
+    public CommandMarry(Marriage marriage) {
+        super(marriage, "marry");
+        if (Settings.ENABLE_PRIEST.value()) {
             setDescription("Marry 2 players with eachother.");
             setUsage("<player1> <player2>");
             setMinArgs(1);
@@ -22,29 +22,30 @@ public class CommandMarry extends Command {
             setMinArgs(0);
         }
 
-		setAllowConsole(false);
-	}
-	
-	@Override
-	public void execute() {
-        if(Settings.ENABLE_PRIEST.value()) {
+        setAllowConsole(false);
+    }
+
+    @Override
+    public void execute() {
+        if (Settings.ENABLE_PRIEST.value()) {
             Player player1 = getArgAsPlayer(-1);
             Player player2 = getArgAsPlayer(0);
-            if(player1 == null) {
+            if (player1 == null) {
                 reply(Message.PLAYER_NOT_FOUND, getArg(-1));
                 return;
-            } if(player2 == null) {
+            }
+            if (player2 == null) {
                 reply(Message.PLAYER_NOT_FOUND, getArg(0));
                 return;
             }
             MPlayer mp1 = marriage.getMPlayer(player1.getUniqueId());
             MPlayer mp2 = marriage.getMPlayer(player2.getUniqueId());
-            if(mp1.isMarried() || mp2.isMarried()) {
+            if (mp1.isMarried() || mp2.isMarried()) {
                 reply(Message.ALREADY_MARRIED);
                 return;
             }
             MPlayer mp = marriage.getMPlayer(player.getUniqueId());
-            if(!mp.isPriest()) {
+            if (!mp.isPriest()) {
                 reply(Message.NOT_A_PRIEST);
                 return;
             }
@@ -80,5 +81,5 @@ public class CommandMarry extends Command {
                 reply(Message.PLAYER_NOT_FOUND, getArg(-1));
             }
         }
-	}
+    }
 }

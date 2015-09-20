@@ -22,9 +22,9 @@ public class CommandTeleport extends Command {
     public void execute() {
         MPlayer mPlayer = marriage.getMPlayer(player.getUniqueId());
         MData marriage = mPlayer.getMarriage();
-        if(marriage != null) {
+        if (marriage != null) {
             Player partner = Bukkit.getPlayer(marriage.getOtherPlayer(player.getUniqueId()));
-            if(partner != null) {
+            if (partner != null) {
                 player.teleport(partner);
                 reply(Message.TELEPORTED);
                 partner.sendMessage(ChatColor.translateAlternateColorCodes('&', Message.TELEPORTED_2.toString()));

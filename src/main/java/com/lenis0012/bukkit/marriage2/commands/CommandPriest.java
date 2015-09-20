@@ -18,7 +18,7 @@ public class CommandPriest extends Command {
         setMinArgs(2);
         setPermission("marry.admin");
 
-        if(!Settings.ENABLE_PRIEST.value()) {
+        if (!Settings.ENABLE_PRIEST.value()) {
             setHidden(true);
         }
     }
@@ -27,16 +27,16 @@ public class CommandPriest extends Command {
     public void execute() {
         String type = getArg(0);
         Player player = getArgAsPlayer(1);
-        if(player == null) {
+        if (player == null) {
             reply(Message.PLAYER_NOT_FOUND, getArg(1));
             return;
         }
 
         MPlayer mp = marriage.getMPlayer(player.getUniqueId());
-        if(type.equalsIgnoreCase("add")) {
+        if (type.equalsIgnoreCase("add")) {
             mp.setPriest(true);
             reply(Message.PRIEST_ADDED);
-        } else if(type.equalsIgnoreCase("remove")) {
+        } else if (type.equalsIgnoreCase("remove")) {
             mp.setPriest(false);
             reply(Message.PRIEST_REMOVED);
         }

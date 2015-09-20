@@ -21,11 +21,9 @@
  */
 package com.lenis0012.bukkit.marriage2.misc;
 
-import com.google.common.collect.ImmutableList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -35,6 +33,7 @@ import java.util.*;
 import java.util.concurrent.Callable;
 
 public class UUIDFetcher implements Callable<Map<String, UUID>> {
+
     private static final double PROFILES_PER_REQUEST = 100;
     private static final String PROFILE_URL = "https://api.mojang.com/profiles/minecraft";
     private final JSONParser jsonParser = new JSONParser();
@@ -61,6 +60,8 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
     }
     // lenis0012 end
 
+    @Override
+    @SuppressWarnings("SleepWhileInLoop")
     public Map<String, UUID> call() throws Exception {
         Map<String, UUID> uuidMap = new HashMap<String, UUID>();
         int requests = (int) Math.ceil(names.size() / PROFILES_PER_REQUEST);
@@ -83,6 +84,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
         return uuidMap;
     }
 
+    @SuppressWarnings("ConvertToTryWithResources")
     private static void writeBody(HttpURLConnection connection, String body) throws Exception {
         OutputStream stream = connection.getOutputStream();
         stream.write(body.getBytes());
@@ -102,7 +104,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
     }
 
     private static UUID getUUID(String id) {
-        return UUID.fromString(id.substring(0, 8) + "-" + id.substring(8, 12) + "-" + id.substring(12, 16) + "-" + id.substring(16, 20) + "-" +id.substring(20, 32));
+        return UUID.fromString(id.substring(0, 8) + "-" + id.substring(8, 12) + "-" + id.substring(12, 16) + "-" + id.substring(16, 20) + "-" + id.substring(20, 32));
     }
 
     public static byte[] toBytes(UUID uuid) {

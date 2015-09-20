@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
  * Created by Lennart on 7/9/2015.
  */
 public class CommandSeen extends Command {
+
     public CommandSeen(Marriage marriage) {
         super(marriage, "seen");
         setDescription("Check when your partner last logged in.");
@@ -23,10 +24,10 @@ public class CommandSeen extends Command {
     public void execute() {
         MPlayer mPlayer = marriage.getMPlayer(player.getUniqueId());
         MData marriage = mPlayer.getMarriage();
-        if(marriage != null) {
+        if (marriage != null) {
             MPlayer mp = this.marriage.getMPlayer(marriage.getOtherPlayer(player.getUniqueId()));
             Player partner = Bukkit.getPlayer(marriage.getOtherPlayer(player.getUniqueId()));
-            if(partner != null) {
+            if (partner != null) {
                 long time = System.currentTimeMillis() - mp.getLastLogin();
                 reply(Message.ONLINE_SINCE, format(time));
             } else {
@@ -44,11 +45,11 @@ public class CommandSeen extends Command {
         long min = TimeUnit.MILLISECONDS.toMinutes(ms) % 60;
         long hrs = TimeUnit.MILLISECONDS.toHours(ms) % 24;
         long dys = TimeUnit.MILLISECONDS.toDays(ms);
-        if(dys > 0) {
+        if (dys > 0) {
             return String.format("%sdys%shrs", dys, hrs);
-        } else if(hrs > 0) {
+        } else if (hrs > 0) {
             return String.format("%shrs%smin", hrs, min);
-        } else if(min > 0) {
+        } else if (min > 0) {
             return String.format("%smin%ssec", min, sec);
         } else {
             return sec + "sec";

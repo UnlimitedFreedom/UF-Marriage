@@ -1,9 +1,5 @@
 package com.lenis0012.bukkit.marriage2.listeners;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.lenis0012.bukkit.marriage2.MData;
 import com.lenis0012.bukkit.marriage2.MPlayer;
@@ -22,6 +18,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import java.util.List;
 
 public class KissListener implements Listener {
+
     private final List<String> cooldown = Lists.newArrayList();
     private final MarriageCore core;
 
@@ -30,17 +27,18 @@ public class KissListener implements Listener {
     }
 
     @EventHandler
+    @SuppressWarnings({"null", "Convert2Lambda"})
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
         final Player player = event.getPlayer();
         Entity e = event.getRightClicked();
-        if(e instanceof Player) {
+        if (e instanceof Player) {
             final Player clicked = (Player) e;
-            if(player.isSneaking() && clicked.isSneaking()) {
+            if (player.isSneaking() && clicked.isSneaking()) {
                 MPlayer mp = core.getMPlayer(player.getUniqueId());
-                if(mp.isMarried()) {
+                if (mp.isMarried()) {
                     MData data = mp.getMarriage();
-                    if(clicked.getUniqueId().toString().equalsIgnoreCase(data.getOtherPlayer(player.getUniqueId()).toString())) {
-                        if(!cooldown.contains(player.getName()) && !cooldown.contains(clicked.getName())) {
+                    if (clicked.getUniqueId().toString().equalsIgnoreCase(data.getOtherPlayer(player.getUniqueId()).toString())) {
+                        if (!cooldown.contains(player.getName()) && !cooldown.contains(clicked.getName())) {
                             cooldown.add(player.getName());
                             cooldown.add(clicked.getName());
                             Location l1 = player.getEyeLocation();
@@ -48,7 +46,7 @@ public class KissListener implements Listener {
                             Location l = l1.clone().add((l2.getX() - l1.getX()) / 2, (l2.getY() - l1.getY()) / 2, (l2.getZ() - l1.getZ()) / 2);
 
                             PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(EnumParticle.HEART, false, (float) l.getX(), (float) l.getY(), (float) l.getZ(), 0.3F, 0.3F, 0.3F, 1F, 7);
-                            for(Player p : player.getWorld().getPlayers()) {
+                            for (Player p : player.getWorld().getPlayers()) {
                                 ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
                             }
 

@@ -3,6 +3,7 @@ package com.lenis0012.bukkit.marriage2.internal.data;
 import com.google.common.collect.Maps;
 import com.lenis0012.bukkit.marriage2.MData;
 import com.lenis0012.bukkit.marriage2.MPlayer;
+import com.lenis0012.bukkit.marriage2.MarriageLog;
 import com.lenis0012.bukkit.marriage2.internal.MarriageCore;
 import com.lenis0012.bukkit.marriage2.misc.UUIDFetcher;
 import org.bukkit.Bukkit;
@@ -10,14 +11,15 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
+import org.bukkit.configuration.InvalidConfigurationException;
 
 public class DataConverter {
+
     private final MarriageCore core;
     private File dir;
     private int totalFiles;
@@ -33,24 +35,25 @@ public class DataConverter {
         return dir.exists();
     }
 
+    @SuppressWarnings("SleepWhileInLoop")
     public void convert() {
         String[] files = dir.list();
         this.totalFiles = files.length;
-        core.getLogger().log(Level.INFO, "Converting " + totalFiles + " old database entries...");
-        core.getLogger().log(Level.INFO, "Retrieving UUIDs...");
+        MarriageLog.info("Converting " + totalFiles + " old database entries...");
+        MarriageLog.info("Retrieving UUIDs...");
 
         // Retrieve UUIDs from mojang
         Map<String, UUID> uuidMap = Maps.newHashMap();
         UUIDFetcher uuidFetcher = new UUIDFetcher(new ArrayList<String>());
-        for(completed = 0; completed < totalFiles; completed++) {
+        for (completed = 0; completed < totalFiles; completed++) {
             String name = files[completed].replace(".yml", "");
             uuidFetcher.addName(name);
-            if(uuidFetcher.size() >= 100 || completed >= totalFiles - 1) {
+            if (uuidFetcher.size() >= 100 || completed >= totalFiles - 1) {
                 try {
                     uuidMap.putAll(uuidFetcher.call());
                     uuidFetcher = new UUIDFetcher(new ArrayList<String>());
-                } catch(Exception e) {
-                    core.getLogger().log(Level.WARNING, "Failed to retrieve UUID for 100 players!");
+                } catch (Exception e) {
+                    MarriageLog.warning("Failed to retrieve UUID for 100 players!");
                 }
             }
 
@@ -62,9 +65,9 @@ public class DataConverter {
         }
 
         // Insert data into new DB...
-        core.getLogger().log(Level.INFO, "Inserting user data into new database...");
+        MarriageLog.info("Inserting user data into new database...");
         this.completed = 0;
-        for(Map.Entry<String, UUID> entry : uuidMap.entrySet()) {
+        for (Map.Entry<String, UUID> entry : uuidMap.entrySet()) {
             try {
                 String name = entry.getKey();
                 File file = new File(dir, name + ".yml");
@@ -72,15 +75,15 @@ public class DataConverter {
                 cnf.load(file);
 
                 MPlayer mp = core.getMPlayer(entry.getValue());
-                if(cnf.contains("partner")) {
+                if (cnf.contains("partner")) {
                     UUID uuid = uuidMap.get(cnf.getString("partner"));
-                    if(uuid != null) {
+                    if (uuid != null) {
                         MPlayer mp2 = core.getMPlayer(uuid);
                         MData mdata = core.marry(mp, mp2);
 
-                        if(cnf.contains("home")) {
+                        if (cnf.contains("home")) {
                             World world = Bukkit.getWorld(cnf.getString("home.world"));
-                            if(world != null) {
+                            if (world != null) {
                                 double x = cnf.getDouble("home.x", 0.0);
                                 double y = cnf.getDouble("home.y", 0.0);
                                 double z = cnf.getDouble("home.z", 0.0);
@@ -92,34 +95,34 @@ public class DataConverter {
                         }
                     }
                 }
-            } catch(Exception e) {
-                core.getLogger().log(Level.WARNING, "Failed to convert data for player!", e);
+            } catch (IOException | InvalidConfigurationException e) {
+                MarriageLog.warning("Failed to convert data for player!" + e);
             }
         }
 
         // Save changes
-        core.getLogger().log(Level.INFO, "Saving changes in database...");
+        MarriageLog.info("Saving changes in database...");
         core.unloadAll();
 
         // Reset old data
-        core.getLogger().log(Level.INFO, "Renaming playerdata file...");
-        while(!dir.renameTo(new File(core.getPlugin().getDataFolder(), "playerdata_backup"))) {
+        MarriageLog.info("Renaming playerdata file...");
+        while (!dir.renameTo(new File(core.getPlugin().getDataFolder(), "playerdata_backup"))) {
             try {
                 Thread.sleep(50L);
-            } catch(InterruptedException e) {
+            } catch (InterruptedException e) {
             }
         }
     }
 
     private void reportStatus(int percent) {
         StringBuilder bar = new StringBuilder("[");
-        for(int i = 0; i < percent; i+= 5) {
+        for (int i = 0; i < percent; i += 5) {
             bar.append('=');
         }
-        for(int i = percent; i < 100; i+= 5) {
+        for (int i = percent; i < 100; i += 5) {
             bar.append('_');
         }
         bar.append("] (").append(percent).append("%)");
-        core.getLogger().log(Level.INFO, bar.toString());
+        MarriageLog.info(bar.toString());
     }
 }
